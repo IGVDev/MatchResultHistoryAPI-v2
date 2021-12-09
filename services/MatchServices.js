@@ -36,17 +36,23 @@ const getMatchesService = async (req, res, next) => {
 };
 
 const getUsersService = async (league) => {
-  const users = await getMatchesService(league).then((matches) => {
-    let users = [];
-    for (match of matches) {
-      if (!users.includes(match.user1)) {
-        users.push(match.user1);
+  try {
+    const users = await getMatchesService(league).then((matches) => {
+      let users = [];
+      for (match of matches) {
+        if (!users.includes(match.user1)) {
+          users.push(match.user1);
+        }
+        if (!users.includes(match.user2)) {
+          users.push(match.user2);
+        }
       }
-      if (!users.includes(match.user2)) {
-        users.push(match.user2);
-      }
-    }
-  });
+      return users;
+    });
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getStandingsService = async (league, year) => {
