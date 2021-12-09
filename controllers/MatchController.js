@@ -16,6 +16,12 @@ const getStandings = async (req, res) => {
   res.json(standings);
 };
 
+const getUsers = async (req, res) => {
+  const { league } = req.params;
+  const users = await MatchServices.getUsersService(req, league);
+  res.json(users);
+};
+
 const createMatch = async (req, res) => {
   const newMatch = await MatchServices.createMatchService(req);
   res.json(newMatch);
@@ -49,6 +55,7 @@ module.exports = {
   baseRoute,
   getMatches,
   getStandings,
+  getUsers,
   createMatch,
   getMatchesByUser,
   getMatchById,

@@ -14,6 +14,8 @@ router.get("/getMatches/:league?/:year?", matchController.getMatches);
 
 router.get("/getStandings/:league?/:year?", matchController.getStandings);
 
+router.get("/getUsers/:league?", matchController.getUsers);
+
 router.get(
   "/getMatchesByUser/:username/:league?/:year?",
   matchController.getMatchesByUser

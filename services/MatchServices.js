@@ -35,6 +35,20 @@ const getMatchesService = async (req, res, next) => {
   return matches;
 };
 
+const getUsersService = async (league) => {
+  const users = await getMatchesService(league).then((matches) => {
+    let users = [];
+    for (match of matches) {
+      if (!users.includes(match.user1)) {
+        users.push(match.user1);
+      }
+      if (!users.includes(match.user2)) {
+        users.push(match.user2);
+      }
+    }
+  });
+};
+
 const getStandingsService = async (league, year) => {
   const standings = await getMatchesService(league, year).then((matches) => {
     let users = [];
@@ -145,6 +159,7 @@ const deleteMatchService = async (id) => {
 module.exports = {
   getMatchesService,
   getStandingsService,
+  getUsersService,
   createMatchService,
   getMatchByIdService,
   getMatchesByUsernameService,
