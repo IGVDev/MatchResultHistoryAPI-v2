@@ -3,12 +3,6 @@ const _ = require("underscore");
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const catchAsync = (fn) => {
-  return (req, res, next) => {
-    fn(req, res, next).catch(next);
-  };
-};
-
 const createMatchService = (req) => {
   try {
     new Matches(req.body).save();
@@ -25,21 +19,20 @@ const getMatchesService = async (req, res, next) => {
     const start = new Date(year, 1, 1);
     const end = new Date(year, 12, 31);
     filter = {
-      createdAt: { ...filter, $gte: start, $lt: end },
+      createdAt: { $gte: start, $lt: end },
     };
   }
   if (league) {
     filter = { ...filter, league: league };
   }
-  const matches = await Matches.find(filter).lean();
-  return matches;
+  return await Matches.find(filter).lean();
 };
 
 const getUsersService = async (league) => {
   try {
-    const users = await getMatchesService(league).then((matches) => {
+    return await getMatchesService(league).then((matches) => {
       let users = [];
-      for (match of matches) {
+      for (let match of matches) {
         if (!users.includes(match.user1)) {
           users.push(match.user1);
         }
@@ -49,19 +42,18 @@ const getUsersService = async (league) => {
       }
       return users;
     });
-    return users;
   } catch (error) {
     console.log(error);
   }
 };
 
 const getStandingsService = async (league, year) => {
-  const standings = await getMatchesService(league, year).then((matches) => {
+  return await getMatchesService(league, year).then((matches) => {
     let users = [];
     let standings = [];
     let i = 0;
     // Extract usernames from matches
-    for (match of matches) {
+    for (let match of matches) {
       if (!users.includes(match.user1)) {
         users.push(match.user1);
       }
@@ -70,7 +62,7 @@ const getStandingsService = async (league, year) => {
       }
     }
     // Build users data table
-    for (user of users) {
+    for (let user of users) {
       standings.push({
         name: capitalize(users[i]),
         gamesPlayed: 0,
@@ -81,15 +73,15 @@ const getStandingsService = async (league, year) => {
         goalsFor: 0,
         goalsAgainst: 0,
         goalDif: 0,
-        winpercent: 0,
+        winPercent: 0,
       });
       i++;
     }
     // Populate users data table
-    for (match of matches) {
-      let { user1, user2, result1, result2 } = match;
-      let home = _.find(standings, { name: capitalize(user1) });
-      let away = _.find(standings, { name: capitalize(user2) });
+    for (let match of matches) {
+      let {user1, user2, result1, result2} = match;
+      let home = _.find(standings, {name: capitalize(user1)});
+      let away = _.find(standings, {name: capitalize(user2)});
       home.gamesPlayed++;
       home.goalsFor += result1;
       home.goalsAgainst += result2;
@@ -104,7 +96,7 @@ const getStandingsService = async (league, year) => {
         home.winpercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
         away.gamesLost++;
         away.winpercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
-      } else if (result1 == result2) {
+      } else if (result1 === result2) {
         home.points += 1;
         home.gamesTied++;
         home.winpercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
@@ -121,24 +113,21 @@ const getStandingsService = async (league, year) => {
     }
     return standings;
   });
-  return standings;
 };
 
-const getMatchByIdService = (id) => {
+const getMatchByIdService = async (id) => {
   try {
-    const match = Matches.findById({ _id: id });
-    return match;
+    return await Matches.findById({_id: id});
   } catch (error) {
     console.log(error);
   }
 };
 
-const getMatchesByUsernameService = (username) => {
+const getMatchesByUsernameService = async (username) => {
   try {
-    const matches = Matches.find({
-      $or: [{ user1: username }, { user2: username }],
+    return await Matches.find({
+      $or: [{user1: username}, {user2: username}],
     });
-    return matches;
   } catch (error) {
     console.log(error);
   }
