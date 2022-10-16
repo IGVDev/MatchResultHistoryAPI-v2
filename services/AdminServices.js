@@ -11,7 +11,7 @@ const adminLoginService = (req, res) => {
       return "DENIED";
     }
   } catch (error) {
-    console.log(error);
+    res.status(503).send("Internal Server Error");
   }
 };
 
