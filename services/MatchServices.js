@@ -93,22 +93,22 @@ const getStandingsService = async (league, year) => {
       if (result1 > result2) {
         home.points += 3;
         home.gamesWon++;
-        home.winpercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
+        home.winPercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
         away.gamesLost++;
-        away.winpercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
+        away.winPercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
       } else if (result1 === result2) {
         home.points += 1;
         home.gamesTied++;
-        home.winpercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
+        home.winPercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
         away.points += 1;
         away.gamesTied++;
-        away.winpercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
+        away.winPercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
       } else {
         home.gamesLost++;
-        home.winpercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
+        home.winPercent = ((home.gamesWon / home.gamesPlayed) * 100).toFixed(2);
         away.points += 3;
         away.gamesWon++;
-        away.winpercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
+        away.winPercent = ((away.gamesWon / away.gamesPlayed) * 100).toFixed(2);
       }
     }
     return standings;
