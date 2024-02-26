@@ -1,6 +1,7 @@
+import { Request, Response } from "express";
 const bcrypt = require("bcryptjs");
 
-const adminLoginService = (req, res) => {
+export const adminLoginService = (req: Request, res: Response) => {
   try {
     let { hash } = req.body;
     if (bcrypt.compareSync(process.env.ADMIN_PASSWORD, hash)) {
@@ -14,5 +15,3 @@ const adminLoginService = (req, res) => {
     res.status(503).send("Internal Server Error");
   }
 };
-
-module.exports = { adminLoginService };

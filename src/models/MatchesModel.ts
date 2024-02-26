@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const MatchesSchema = new mongoose.Schema(
   {
     league: {
@@ -37,4 +37,4 @@ const MatchesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("matches", MatchesSchema);
+export default mongoose.model("matches", MatchesSchema);

@@ -1,11 +1,9 @@
-const express = require("express");
+import * as express from "express";
 const router = express.Router();
 // const errorHandler = require("../middlewares/errorHandler");
 
-const matchController = require("../controllers/MatchController");
-const adminController = require("../controllers/AdminController");
-
-// router.all("*", errorHandler);
+import * as matchController from "../controllers/MatchController";
+import * as adminController from "../controllers/AdminController";
 
 // Admin routes
 
@@ -33,4 +31,4 @@ router.put("/updateMatch/:id", matchController.updateMatch);
 
 router.delete("/deleteMatch/:id", matchController.deleteMatch);
 
-module.exports = router;
+export default router;

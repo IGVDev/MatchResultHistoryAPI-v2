@@ -1,5 +1,5 @@
-const httpStatusCodes = require("../config/httpStatusCodes");
-const BaseError = require("./baseError");
+import * as httpStatusCodes from "../config/httpStatusCodes";
+import * as BaseError from "./baseError";
 
 class Api404Error extends BaseError {
   constructor(

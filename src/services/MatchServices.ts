@@ -1,23 +1,39 @@
-const Matches = require("../models/MatchesModel");
-const _ = require("underscore");
+import { Response, Request } from "express";
+import Matches from "../models/MatchesModel";
+import _ from "underscore";
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const createMatchService = (req) => {
+type Match = {
+  user1: string;
+  user2: string;
+  result1: number;
+  result2: number;
+  league: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export const createMatchService = (
+  req: Request,
+  res: Response
+): Promise<string> => {
   try {
     new Matches(req.body).save();
-    return "SUCCESS";
+    return Promise.resolve("SUCCESS");
   } catch (error) {
     console.log(error);
   }
 };
 
-const getMatchesService = async (req, res, next) => {
-  let filter;
-  let { year, league } = req.params;
+export const getMatchesService = async (
+  league: string,
+  year?: string
+): Promise<Match[]> => {
+  let filter: Object = {};
   if (year) {
-    const start = new Date(year, 1, 1);
-    const end = new Date(year, 12, 31);
+    const start = new Date(parseInt(year), 1, 1);
+    const end = new Date(parseInt(year), 12, 31);
     filter = {
       createdAt: { $gte: start, $lt: end },
     };
@@ -28,7 +44,7 @@ const getMatchesService = async (req, res, next) => {
   return await Matches.find(filter).lean();
 };
 
-const getUsersService = async (league) => {
+export const getUsersService = async (league: string): Promise<string[]> => {
   try {
     return await getMatchesService(league).then((matches) => {
       let users = [];
@@ -47,7 +63,10 @@ const getUsersService = async (league) => {
   }
 };
 
-const getStandingsService = async (league, year) => {
+export const getStandingsService = async (
+  league: string,
+  year?: string
+): Promise<Match[]> => {
   return await getMatchesService(league, year).then((matches) => {
     let users = [];
     let standings = [];
@@ -79,9 +98,9 @@ const getStandingsService = async (league, year) => {
     }
     // Populate users data table
     for (let match of matches) {
-      let {user1, user2, result1, result2} = match;
-      let home = _.find(standings, {name: capitalize(user1)});
-      let away = _.find(standings, {name: capitalize(user2)});
+      let { user1, user2, result1, result2 } = match;
+      let home = _.find(standings, { name: capitalize(user1) });
+      let away = _.find(standings, { name: capitalize(user2) });
       home.gamesPlayed++;
       home.goalsFor += result1;
       home.goalsAgainst += result2;
@@ -115,25 +134,31 @@ const getStandingsService = async (league, year) => {
   });
 };
 
-const getMatchByIdService = async (id) => {
+export const getMatchByIdService = async (id: string): Promise<Match> => {
   try {
-    return await Matches.findById({_id: id});
+    return await Matches.findById({ _id: id }).lean();
   } catch (error) {
     console.log(error);
   }
 };
 
-const getMatchesByUsernameService = async (username) => {
+export const getMatchesByUsernameService = async (
+  username: string
+): Promise<Match[]> => {
   try {
     return await Matches.find({
-      $or: [{user1: username}, {user2: username}],
+      $or: [{ user1: username }, { user2: username }],
     });
   } catch (error) {
     console.log(error);
   }
 };
 
-const updateMatchService = async (id, req) => {
+export const updateMatchService = async (
+  id: string,
+  req: Request,
+  res: Response
+): Promise<string> => {
   try {
     await Matches.findByIdAndUpdate({ _id: id }, { $set: req.body });
     return "EDITED SUCCESSFULLY";
@@ -142,22 +167,11 @@ const updateMatchService = async (id, req) => {
   }
 };
 
-const deleteMatchService = async (id) => {
+export const deleteMatchService = async (id: string): Promise<string> => {
   try {
     await Matches.findByIdAndDelete({ _id: id });
     return "DELETED";
   } catch (error) {
     console.log(error);
   }
-};
-
-module.exports = {
-  getMatchesService,
-  getStandingsService,
-  getUsersService,
-  createMatchService,
-  getMatchByIdService,
-  getMatchesByUsernameService,
-  updateMatchService,
-  deleteMatchService,
 };
