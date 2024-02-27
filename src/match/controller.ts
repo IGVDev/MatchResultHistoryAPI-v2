@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as MatchServices from "../services/MatchServices";
+import * as MatchServices from "./services";
 
 export const baseRoute = async (req: Request, res: Response): Promise<void> => {
   res.send(`IT'S ALIVE`);

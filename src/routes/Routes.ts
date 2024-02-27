@@ -2,8 +2,8 @@ import * as express from "express";
 const router = express.Router();
 // const errorHandler = require("../middlewares/errorHandler");
 
-import * as matchController from "../controllers/MatchController";
-import * as adminController from "../controllers/AdminController";
+import * as matchController from "../match/controller";
+import * as adminController from "../admin/controller";
 
 // Admin routes
 

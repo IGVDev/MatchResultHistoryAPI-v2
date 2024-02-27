@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import Matches from "../models/MatchesModel";
+import Matches from "./model";
 import _ from "underscore";
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
