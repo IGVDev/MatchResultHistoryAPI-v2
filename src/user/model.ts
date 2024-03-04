@@ -2,12 +2,12 @@ import { Schema, model } from "mongoose";
 
 const UserSchema = new Schema({
   username: { type: String, required: true },
-  password: { type: String, required: true },
   email: { type: String, required: true },
-  leagues: { type: [String]},
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  createdLeagues: { type: [String], default: [] },
+  leagues: { type: [String], default: [] },
+  subscription: { type: String, default: "free" }
+}, {
+  timestamps: true
 });
 
 export default model("User", UserSchema);
-

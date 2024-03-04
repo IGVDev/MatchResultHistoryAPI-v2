@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import * as MatchServices from "./services";
+import * as MatchServices from "./match.services";
+
+interface ModifiedRequest extends Request {
+  user: {
+    email: string;
+  }
+}
 
 export const baseRoute = async (req: Request, res: Response): Promise<void> => {
   res.send(`IT'S ALIVE`);
@@ -55,6 +61,15 @@ export const getMatchById = async (
   res.json(match);
 };
 
+export const getMatchesByTournament = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tournament = req.params.tournament;
+  const matches = await MatchServices.getMatchesByTournamentService(tournament);
+  res.json(matches);
+}
+
 export const updateMatch = async (
   req: Request,
   res: Response
@@ -72,3 +87,15 @@ export const deleteMatch = async (
   const match = await MatchServices.deleteMatchService(id);
   res.json(match);
 };
+
+export const updateTournamentNode = async (
+  req: ModifiedRequest,
+  res: Response
+): Promise<void> => {
+  const matchId = req.params.id;
+  const email = req.user.email;
+  const body = req.body;
+  const match = await MatchServices.updateTournamentNode(matchId, body, email);
+  res.json(match);
+};
+

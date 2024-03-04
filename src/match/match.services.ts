@@ -1,6 +1,8 @@
 import { Response, Request } from "express";
-import Matches from "./model";
+import Matches from "./match.model";
 import _ from "underscore";
+import { ObjectId } from "mongoose";
+import leagueModel from "../league/league.model";
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
@@ -166,6 +168,50 @@ export const updateMatchService = async (
     console.log(error);
   }
 };
+
+export const updateTournamentNode = async (matchId: string, body, email) => {
+  try {
+    let match = await Matches.findById({ _id: matchId }).lean();
+    const league = await leagueModel.findById({ _id: match.league.id });
+
+    if (league.editors && !league.editors.includes(email)) {
+      return "You do not have permission to edit this league";
+    }
+
+    match = { ...match, ...body };
+    await Matches.findByIdAndUpdate({ _id: matchId }, { $set: match });
+
+    const { nextRoundMatchId, previousRoundMatchIds } = match;
+    if (nextRoundMatchId) {
+      // check match for teams already filled
+      const nextMatch = await Matches.findById({ _id: nextRoundMatchId }).lean();
+      if (nextMatch.team1 === "TBD") {
+        // check if previous matches are filled
+        nextMatch.team1 = match.winner;
+        await
+          Matches.findByIdAndUpdate({ _id: nextRoundMatchId }, { $set: nextMatch });
+      } else if (nextMatch.team2 === "TBD") {
+        nextMatch.team2 = match.winner;
+        await
+          Matches.findByIdAndUpdate({ _id: nextRoundMatchId }, { $set: nextMatch });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getMatchesByTournamentService = async (
+  tournament: string) => {
+  try {
+    const matches = await Matches.find({
+      "tournament.id": tournament
+    }).lean();
+    return matches;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export const deleteMatchService = async (id: string): Promise<string> => {
   try {

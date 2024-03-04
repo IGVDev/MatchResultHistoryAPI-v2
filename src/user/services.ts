@@ -1,7 +1,15 @@
-import User from "./model";
 
-export const createUserService = async (body: Object) => {
+import User from "./model";
+import bcrypt from "bcryptjs";
+
+type User = {
+  email: string;
+  password: string;
+};
+
+export const createUserService = async (body: User) => {
   try {
+    body.password = await bcrypt.hash(body.password, 10);
     const newUser = new User(body).save();
     return newUser;
   } catch (error) {
@@ -51,16 +59,4 @@ export const getUsersByLeagueService = async (league: string) => {
   } catch (error) {
     return [];
   }
-};
-
-export const userLoginService = async (email: string, password: string) => {
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return "User not found";
-        if (user.password !== password) return "Invalid password";
-        
-        return user;
-    } catch (error) {
-        throw error;
-    }
 };
