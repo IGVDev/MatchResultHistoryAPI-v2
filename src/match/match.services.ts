@@ -169,7 +169,7 @@ export const updateMatchService = async (
   }
 };
 
-export const updateTournamentNode = async (matchId: string, body, email) => {
+export const updateTournamentNode = async ({ matchId, body, email }) => {
   try {
     let match = await Matches.findById({ _id: matchId }).lean();
     const league = await leagueModel.findById({ _id: match.league.id });
@@ -185,12 +185,12 @@ export const updateTournamentNode = async (matchId: string, body, email) => {
     if (nextRoundMatchId) {
       // check match for teams already filled
       const nextMatch = await Matches.findById({ _id: nextRoundMatchId }).lean();
-      if (nextMatch.team1 === "TBD") {
+      if (nextMatch.previousRoundMatchIds[0] === matchId && nextMatch.team1 === "TBD") {
         // check if previous matches are filled
         nextMatch.team1 = match.winner;
         await
           Matches.findByIdAndUpdate({ _id: nextRoundMatchId }, { $set: nextMatch });
-      } else if (nextMatch.team2 === "TBD") {
+      } else if (nextMatch.previousRoundMatchIds[1] === matchId && nextMatch.team2 === "TBD") {
         nextMatch.team2 = match.winner;
         await
           Matches.findByIdAndUpdate({ _id: nextRoundMatchId }, { $set: nextMatch });
