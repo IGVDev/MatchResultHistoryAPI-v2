@@ -102,12 +102,10 @@ const saveMatches = async (matchesByRound: any[]) => {
 
 const updateMatchLinks = async (matchesByRound: any[]) => {
     for (let i = 0; i < matchesByRound.length; i++) {
-        console.log('i', i)
         const currentRoundMatches = matchesByRound[i];
         const nextRoundMatches = matchesByRound[i + 1];
-
         for (let j = 0; j < currentRoundMatches.length; j++) {
-            console.log('j', j)
+
             const currentMatch = currentRoundMatches[j];
             const nextRoundMatch = nextRoundMatches ? nextRoundMatches[Math.floor(j / 2)] : null;
 

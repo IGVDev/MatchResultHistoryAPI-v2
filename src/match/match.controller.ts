@@ -95,7 +95,7 @@ export const updateTournamentNode = async (
   const matchId = req.params.id;
   const email = req.user.email;
   const body = req.body;
-  const match = await MatchServices.updateTournamentNode(matchId, body, email);
+  const match = await MatchServices.updateTournamentNode({ matchId, body, email });
   res.json(match);
 };
 
