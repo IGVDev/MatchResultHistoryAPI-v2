@@ -132,33 +132,28 @@ const updateMatchLinks = async (matchesByRound: any[]) => {
 
 
 export const createTournamentService = async (tournament: ITournament, league: any) => {
-    try {
-        tournament.league = { id: league._id, name: league.name };
-        let newTournament = new Tournament(tournament);
+    tournament.league = { id: league._id, name: league.name };
+    let newTournament = new Tournament(tournament);
 
-        if (tournament.type === 'knockout') {
-            if (tournament.teams.length % 2 !== 0) {
-                throw new Error('Number of teams must be even');
-            }
-            const matchesByRound = await createMatches(tournament.teams, { id: newTournament._id, name: newTournament.name }, { id: league._id, name: league.name });
-
-            const savedMatchesIds = await saveMatches(matchesByRound);
-
-            await updateMatchLinks(savedMatchesIds);
-
-            // Extract the IDs from savedMatchesIds array
-            const matchIds = savedMatchesIds.flatMap(roundMatches => roundMatches.map(match => match._id));
-
-            // Assign matchIds to newTournament.matches
-            newTournament.matches = matchIds;
-
+    if (tournament.type === 'knockout') {
+        if (tournament.teams.length % 2 !== 0) {
+            throw new Error('Number of teams must be even');
         }
+        const matchesByRound = await createMatches(tournament.teams, { id: newTournament._id, name: newTournament.name }, { id: league._id, name: league.name });
 
-        return await newTournament.save();
+        const savedMatchesIds = await saveMatches(matchesByRound);
 
-    } catch (error) {
-        throw error;
+        await updateMatchLinks(savedMatchesIds);
+
+        // Extract the IDs from savedMatchesIds array
+        const matchIds = savedMatchesIds.flatMap(roundMatches => roundMatches.map(match => match._id));
+
+        // Assign matchIds to newTournament.matches
+        newTournament.matches = matchIds;
+
     }
+
+    return await newTournament.save();
 }
 
 export const getTournamentsService = async () => {

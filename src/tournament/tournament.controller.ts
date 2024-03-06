@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as TournamentServices from './tournament.services';
 import Leagues from '../league/league.model';
 
@@ -8,7 +8,10 @@ interface ModifiedRequest extends Request {
     }
 }
 
-export const createTournament = async (req: ModifiedRequest, res: Response): Promise<void> => {
+export const createTournament = async (req: ModifiedRequest, res: Response, next: NextFunction): Promise<void> => {
+    if (req.body.league.length < 1) {
+        throw new Error('League is required');
+    }
     const league = await Leagues.findById(req.body.league);
 
     if (league.editors && !league.editors.includes(req.user.email)) {
