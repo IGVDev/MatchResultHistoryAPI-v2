@@ -6,6 +6,7 @@ import routes from "../routes/Routes";
 import leagueRoutes from "../league/league.router";
 import tournamentRoutes from "../tournament/tournament.routes";
 import matchRoutes from "../match/match.router";
+import teamRoutes from "../team/team.router";
 import { errorHandler } from "../middleware/errors";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use("/", jsonParser, routes);
 app.use("/leagues", jsonParser, leagueRoutes);
 app.use('/tournaments', jsonParser, tournamentRoutes)
 app.use('/matches', jsonParser, matchRoutes)
+app.use('/teams', jsonParser, teamRoutes)
 
 app.use(errorHandler)
 
